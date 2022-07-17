@@ -1,6 +1,7 @@
 package sber.data.airportsClient;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -59,7 +60,7 @@ public class AirportsClient {
                 JSONArray airportInfo = jsonObject.getJSONArray("airportInfo");
                 List<Object> airportInfoList = airportInfo.toList();
 
-                int idFromResponse = airportInfoList.isEmpty() ? 0 : Integer.parseInt((String) airportInfoList.get(0));
+                int idFromResponse = airportInfoList.isEmpty() ? -1 : NumberUtils.toInt((String) airportInfoList.get(0));
 
                 if (id == idFromResponse) {
                     log.info("Success! Id and IdFromResponse match!");
@@ -88,7 +89,9 @@ public class AirportsClient {
 
         JSONObject body = new JSONObject();
         body.put("id", id);
-        body.put("timestamp", simpleDateFormat.format(timestamp));
+        synchronized (this) {
+            body.put("timestamp", simpleDateFormat.format(timestamp));
+        }
         body.put("uuid", generateUuid(timestamp));
         body.put("currentThreadName", Thread.currentThread().getName());
 

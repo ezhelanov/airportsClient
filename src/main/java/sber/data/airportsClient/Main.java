@@ -16,7 +16,7 @@ public class Main {
 
         params.stream()
                 .filter(NumberUtils::isParsable)
-                .map(Integer::parseInt)
+                .map(NumberUtils::toInt)
                 .collect(Collectors.toList())
                 .parallelStream()
                 .forEach(airportsClient::doPost);
